@@ -58,7 +58,9 @@ function updateReleaseSections(targets, projectPath) {
                 PRODUCT_BUNDLE_IDENTIFIER = ${id};
                 PROVISIONING_PROFILE = ${ppUUID};
                 DEVELOPMENT_TEAM = ${teamID};
-                CODE_SIGN_IDENTITY = "iPhone Distribution";`;
+                CODE_SIGN_IDENTITY = "iPhone Distribution";
+                "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Islamic_${ppName}_PROD;
+                "DEVELOPMENT_TEAM[sdk=iphoneos*]" = ${teamID};`;
 
         console.log(`🔧 Preparing to update Release section for target: ${ppName}`);
         //console.log(`🔧 Replacement string:`, replacement);
