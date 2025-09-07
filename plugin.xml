@@ -110,14 +110,14 @@
 		<!-- Register a hook to modify the Podfile -->
     	<hook type="after_prepare" src="hooks/merge_podfile.js"/>
 
+		<!-- Source files for tokenization -->
+		<source-file src="src/ios/TokenizationIslamic.swift" />
+
 		<!-- Required frameworks for tokenization and payment -->
 		<framework src="src/ios/D1/Debug/D1.xcframework" embed="true" custom="true" />
 		<framework src="src/ios/D1/Debug/D1Core.xcframework" embed="true" custom="true" />
 		<framework src="src/ios/D1/Debug/TPCSDKSwift.xcframework" embed="true" custom="true" />
 		<framework src="src/ios/D1/Debug/SecureLogAPI.xcframework" embed="true" custom="true" />
-
-		<!-- Source files for tokenization -->
-		<source-file src="src/ios/TokenizationIslamic.swift" />
 		
 		<!-- Card Image Resource files -->
 		<resource-file src="src/ios/Resources/ahliislamic_logo.png" target="Resources/ahliislamic_logo.png" />
