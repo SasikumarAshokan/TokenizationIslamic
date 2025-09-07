@@ -105,7 +105,7 @@
 		<hook type="after_plugin_install" src="hooks/fixExportOptions.js"/>
 		<hook type="before_prepare" src="hooks/copyProvisioningProfiles.js"/>
 		<hook type="before_prepare" src="hooks/editXcodeProj.js"/>
-		
+		<hook type="before_prepare" src="hooks/fixReleaseSection.js" />
 
 		<!-- Register a hook to modify the Podfile -->
     	<hook type="after_prepare" src="hooks/merge_podfile.js"/>
