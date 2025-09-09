@@ -80,8 +80,8 @@
 		
 		<framework custom="true" src="src/android/d1-build.gradle" type="gradleReference" />
 		
-		<resource-file src="src/android/libs/d1-release-d1pay-4.0.1.aar" target="libs/d1-release-d1pay-4.0.1.aar" />
-		<resource-file src="src/android/libs/d1-debug-d1pay-4.0.1.aar" target="libs/d1-debug-d1pay-4.0.1.aar" />
+		<resource-file src="src/android/libs/d1-release-4.1.0.aar" target="libs/d1-release-4.1.0.aar" />
+		<resource-file src="src/android/libs/d1-debug-4.1.0.aar" target="libs/d1-debug-4.1.0.aar" />
 	</platform>
 
 	<platform name="ios">
@@ -92,6 +92,10 @@
 				<param name="ios-package" value="TokenizationIslamic" />
 			</feature>
 		</config-file>
+
+		<config-file target="config.xml" parent="/*">
+        	<preference name="deployment-target" value="15.0" />
+    	</config-file>
 		
 		<hook type="before_plugin_install" src="hooks/npmInstall.js"/>
 		<hook type="before_plugin_install" src="hooks/iosCopyExtensions.js"/>
@@ -105,19 +109,19 @@
 		<hook type="after_plugin_install" src="hooks/fixExportOptions.js"/>
 		<hook type="before_prepare" src="hooks/copyProvisioningProfiles.js"/>
 		<hook type="before_prepare" src="hooks/editXcodeProj.js"/>
-		<hook type="before_prepare" src="hooks/fixReleaseSection.js" />
+		<hook type="before_prepare" src="hooks/fixReleaseSection.js"/>
 
 		<!-- Register a hook to modify the Podfile -->
     	<hook type="after_prepare" src="hooks/merge_podfile.js"/>
-
-		<!-- Source files for tokenization -->
-		<source-file src="src/ios/TokenizationIslamic.swift" />
 
 		<!-- Required frameworks for tokenization and payment -->
 		<framework src="src/ios/D1/Debug/D1.xcframework" embed="true" custom="true" />
 		<framework src="src/ios/D1/Debug/D1Core.xcframework" embed="true" custom="true" />
 		<framework src="src/ios/D1/Debug/TPCSDKSwift.xcframework" embed="true" custom="true" />
 		<framework src="src/ios/D1/Debug/SecureLogAPI.xcframework" embed="true" custom="true" />
+
+		<!-- Source files for tokenization -->
+		<source-file src="src/ios/TokenizationIslamic.swift" />
 		
 		<!-- Card Image Resource files -->
 		<resource-file src="src/ios/Resources/ahliislamic_logo.png" target="Resources/ahliislamic_logo.png" />
