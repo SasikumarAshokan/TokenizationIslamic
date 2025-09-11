@@ -122,14 +122,14 @@ function updatePbxProj(pbxprojPath, teamID, targets, codeSignIdentity) {
             updatedPbxproj = updatedPbxproj.replace(devTeamPattern, `DEVELOPMENT_TEAM = "${teamID}";`);
 
             // Add the step to update the LD_RUNPATH_SEARCH_PATHS for each target
-            /*targets.forEach(target => {
+            targets.forEach(target => {
                 updatedPbxproj = updatedPbxproj.replace(
                     new RegExp(`(\\{[^}]*?PRODUCT_NAME\\s*=\\s*${target.id};[^}]*?LD_RUNPATH_SEARCH_PATHS\\s*=\\s*"@executable_path/Frameworks";|\\{[^}]*?LD_RUNPATH_SEARCH_PATHS\\s*=\\s*"@executable_path/Frameworks";[^}]*?PRODUCT_NAME\\s*=\\s*${target.id};)`, 'gs'),
                     function (match) {
                         return match.replace('LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";', 'LD_RUNPATH_SEARCH_PATHS = "@executable_path/../../Frameworks";');
                     }
                 );
-            });*/
+            });
 
             fs.writeFile(pbxprojPath, updatedPbxproj, 'utf8', (err) => {
                 if (err) {
