@@ -122,14 +122,32 @@ function updatePbxProj(pbxprojPath, teamID, targets, codeSignIdentity) {
             updatedPbxproj = updatedPbxproj.replace(devTeamPattern, `DEVELOPMENT_TEAM = "${teamID}";`);
 
             // Add the step to update the LD_RUNPATH_SEARCH_PATHS for each target
-            targets.forEach(target => {
-                updatedPbxproj = updatedPbxproj.replace(
-                    new RegExp(`(\\{[^}]*?PRODUCT_NAME\\s*=\\s*${target.id};[^}]*?LD_RUNPATH_SEARCH_PATHS\\s*=\\s*"@executable_path/Frameworks";|\\{[^}]*?LD_RUNPATH_SEARCH_PATHS\\s*=\\s*"@executable_path/Frameworks";[^}]*?PRODUCT_NAME\\s*=\\s*${target.id};)`, 'gs'),
-                    function (match) {
-                        return match.replace('LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";', 'LD_RUNPATH_SEARCH_PATHS = "@executable_path/../../Frameworks";');
-                    }
-                );
-            });
+targets.forEach(target => {
+    console.log(`🔧 Updating LD_RUNPATH_SEARCH_PATHS for target: ${target.id}`);
+
+    const pattern = new RegExp(
+        `(\\{[^}]*?PRODUCT_NAME\\s*=\\s*${target.id};[^}]*?LD_RUNPATH_SEARCH_PATHS\\s*=\\s*"@executable_path/Frameworks";|\\{[^}]*?LD_RUNPATH_SEARCH_PATHS\\s*=\\s*"@executable_path/Frameworks";[^}]*?PRODUCT_NAME\\s*=\\s*${target.id};)`,
+        'gs'
+    );
+
+    let matches = [...updatedPbxproj.matchAll(pattern)];
+
+    if (matches.length === 0) {
+        console.warn(`⚠️ No LD_RUNPATH_SEARCH_PATHS section matched for target: ${target.id}`);
+    } else {
+        console.log(`✅ Found ${matches.length} match(es) for LD_RUNPATH_SEARCH_PATHS in target: ${target.id}`);
+    }
+
+    updatedPbxproj = updatedPbxproj.replace(pattern, (match) => {
+        const updatedMatch = match.replace(
+            'LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";',
+            'LD_RUNPATH_SEARCH_PATHS = "@executable_path/../../Frameworks";'
+        );
+        console.log(`🔄 Updated LD_RUNPATH_SEARCH_PATHS:\n--- BEFORE ---\n${match}\n--- AFTER ---\n${updatedMatch}`);
+        return updatedMatch;
+    });
+});
+
 
             fs.writeFile(pbxprojPath, updatedPbxproj, 'utf8', (err) => {
                 if (err) {
