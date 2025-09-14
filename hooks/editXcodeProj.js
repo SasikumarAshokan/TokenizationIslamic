@@ -117,38 +117,23 @@ function updatePbxProj(pbxprojPath, teamID, targets, codeSignIdentity) {
                 });
             });
 
-            // Regex pattern to find and replace DEVELOPMENT_TEAM = "" with dynamic teamID
-            const devTeamPattern = /DEVELOPMENT_TEAM\s*=\s*"";/g;
-            updatedPbxproj = updatedPbxproj.replace(devTeamPattern, `DEVELOPMENT_TEAM = "${teamID}";`);
+            // 🔁 Desired LD_RUNPATH_SEARCH_PATHS block
+            const desiredRunpathBlock = `LD_RUNPATH_SEARCH_PATHS = (
+                "$(inherited)",
+                "@executable_path/Frameworks",
+                "@executable_path/../../Frameworks",
+            );`;
+            
+            // Replace all existing LD_RUNPATH_SEARCH_PATHS blocks
+            updatedPbxproj = updatedPbxproj.replace(/LD_RUNPATH_SEARCH_PATHS\s*=\s*\(([\s\S]*?)\);/g, desiredRunpathBlock);
+            
+            // If missing, inject after PRODUCT_NAME for each target
+            targets.forEach(target => {
+                const productNamePattern = new RegExp(`(PRODUCT_NAME\\s*=\\s*"${target.id}";)(?![\\s\\S]*?LD_RUNPATH_SEARCH_PATHS)`, 'g');
+                updatedPbxproj = updatedPbxproj.replace(productNamePattern, `$1\n\t\t\t\t${desiredRunpathBlock}`);
+            });
 
-            // Add the step to update the LD_RUNPATH_SEARCH_PATHS for each target
-targets.forEach(target => {
-    console.log(`🔧 Updating LD_RUNPATH_SEARCH_PATHS for target: ${target.id}`);
-
-    const pattern = new RegExp(
-        `(\\{[^}]*?PRODUCT_NAME\\s*=\\s*${target.id};[^}]*?LD_RUNPATH_SEARCH_PATHS\\s*=\\s*"@executable_path/Frameworks";|\\{[^}]*?LD_RUNPATH_SEARCH_PATHS\\s*=\\s*"@executable_path/Frameworks";[^}]*?PRODUCT_NAME\\s*=\\s*${target.id};)`,
-        'gs'
-    );
-
-    let matches = [...updatedPbxproj.matchAll(pattern)];
-
-    if (matches.length === 0) {
-        console.warn(`⚠️ No LD_RUNPATH_SEARCH_PATHS section matched for target: ${target.id}`);
-    } else {
-        console.log(`✅ Found ${matches.length} match(es) for LD_RUNPATH_SEARCH_PATHS in target: ${target.id}`);
-    }
-
-    updatedPbxproj = updatedPbxproj.replace(pattern, (match) => {
-        const updatedMatch = match.replace(
-            'LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";',
-            'LD_RUNPATH_SEARCH_PATHS = "@executable_path/../../Frameworks";'
-        );
-        console.log(`🔄 Updated LD_RUNPATH_SEARCH_PATHS:\n--- BEFORE ---\n${match}\n--- AFTER ---\n${updatedMatch}`);
-        return updatedMatch;
-    });
-});
-
-
+            
             fs.writeFile(pbxprojPath, updatedPbxproj, 'utf8', (err) => {
                 if (err) {
                     console.error('🚨 Error writing updated project.pbxproj:', err.message);
