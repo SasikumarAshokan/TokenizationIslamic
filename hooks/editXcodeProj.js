@@ -129,10 +129,22 @@ function updatePbxProj(pbxprojPath, teamID, targets, codeSignIdentity) {
                       'gs'
                    ),
             function (match) {
-              return match.replace(
-                /LD_RUNPATH_SEARCH_PATHS\s*=\s*"@executable_path\/Frameworks";/,
-                'LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks");'
-              );
+                const before = match.match(/LD_RUNPATH_SEARCH_PATHS\s*=\s*[^;]+;/);
+                if (before) {
+                console.log(`👉 Target LD_RUNPATH_SEARCH_PATHS ${target.id} BEFORE: ${before[0]}`);
+                }
+              const updated = match.replace(
+        /LD_RUNPATH_SEARCH_PATHS\s*=\s*"@executable_path\/Frameworks";/,
+        'LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks");'
+      );
+
+      // Log the LD_RUNPATH_SEARCH_PATHS line after replacement
+      const after = updated.match(/LD_RUNPATH_SEARCH_PATHS\s*=\s*[^;]+;/);
+      if (after) {
+        console.log(`👉 Target LD_RUNPATH_SEARCH_PATHS ${target.id} AFTER: ${after[0]}`);
+      }
+
+      return updated;
             }
           );
         });
