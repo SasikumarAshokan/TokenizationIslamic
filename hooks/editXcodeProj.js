@@ -122,33 +122,14 @@ function updatePbxProj(pbxprojPath, teamID, targets, codeSignIdentity) {
             updatedPbxproj = updatedPbxproj.replace(devTeamPattern, `DEVELOPMENT_TEAM = "${teamID}";`);
 
             // Add the step to update the LD_RUNPATH_SEARCH_PATHS for each target
-            targets.forEach(target => {
-            updatedPbxproj = updatedPbxproj.replace(
-                new RegExp(
-                  `(\\{[^}]*?PRODUCT_NAME\\s*=\\s*${target.id};[^}]*?LD_RUNPATH_SEARCH_PATHS\\s*=\\s*"@executable_path/Frameworks";|\\{[^}]*?LD_RUNPATH_SEARCH_PATHS\\s*=\\s*"@executable_path/Frameworks";[^}]*?PRODUCT_NAME\\s*=\\s*${target.id};)`,
-                      'gs'
-                   ),
-            function (match) {
-                const before = match.match(/LD_RUNPATH_SEARCH_PATHS\s*=\s*[^;]+;/);
-                if (before) {
-                console.log(`👉 Target LD_RUNPATH_SEARCH_PATHS ${target.id} BEFORE: ${before[0]}`);
-                }
-              const updated = match.replace(
-        /LD_RUNPATH_SEARCH_PATHS\s*=\s*"@executable_path\/Frameworks";/,
-        'LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks");'
-      );
-
-      // Log the LD_RUNPATH_SEARCH_PATHS line after replacement
-      const after = updated.match(/LD_RUNPATH_SEARCH_PATHS\s*=\s*[^;]+;/);
-      if (after) {
-        console.log(`👉 Target LD_RUNPATH_SEARCH_PATHS ${target.id} AFTER: ${after[0]}`);
-      }
-
-      return updated;
-            }
-          );
-        });
-
+            /*targets.forEach(target => {
+                updatedPbxproj = updatedPbxproj.replace(
+                    new RegExp(`(\\{[^}]*?PRODUCT_NAME\\s*=\\s*${target.id};[^}]*?LD_RUNPATH_SEARCH_PATHS\\s*=\\s*"@executable_path/Frameworks";|\\{[^}]*?LD_RUNPATH_SEARCH_PATHS\\s*=\\s*"@executable_path/Frameworks";[^}]*?PRODUCT_NAME\\s*=\\s*${target.id};)`, 'gs'),
+                    function (match) {
+                        return match.replace('LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";', 'LD_RUNPATH_SEARCH_PATHS = "@executable_path/../../Frameworks";');
+                    }
+                );
+            });*/
 
             fs.writeFile(pbxprojPath, updatedPbxproj, 'utf8', (err) => {
                 if (err) {
