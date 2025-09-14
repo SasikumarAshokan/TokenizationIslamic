@@ -96,23 +96,6 @@
 		<config-file target="config.xml" parent="/*">
         	<preference name="deployment-target" value="15.0" />
     	</config-file>
-		
-		<hook type="before_plugin_install" src="hooks/npmInstall.js"/>
-		<hook type="before_plugin_install" src="hooks/iosCopyExtensions.js"/>
-		<hook type="after_plugin_install" src="hooks/iosAddUIExtension.js"/>
-		<hook type="after_plugin_install" src="hooks/iosAddNONUIExtension.js"/>
-		
-		<!--  Hooks for fixing provisioning profiles  -->
-		<hook type="before_plugin_install" src="hooks/saveJsonInfo.js"/>
-		<hook type="before_plugin_install" src="hooks/install_prerequisites.js"/>
-		<hook type="after_plugin_install" src="hooks/copyAndUnzipProvisioningProfiles.js"/>
-		<hook type="after_plugin_install" src="hooks/fixExportOptions.js"/>
-		<hook type="before_build" src="hooks/copyProvisioningProfiles.js"/>
-		<hook type="before_build" src="hooks/editXcodeProj.js"/>
-		<hook type="before_build" src="hooks/fixReleaseSection.js"/>
-
-		<!-- Register a hook to modify the Podfile -->
-    	<hook type="after_build" src="hooks/merge_podfile.js"/>
 
 		<!-- Required frameworks for tokenization and payment -->
 		<framework src="src/ios/D1/Debug/D1.xcframework" embed="true" custom="true" />
